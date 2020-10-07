@@ -1,7 +1,7 @@
 #Data path for data storage.
 STOCK_DATA_ROOT = './StockData/'
 REFERENCES_DATA_PATH = STOCK_DATA_ROOT + 'References/'
-FUNDAMENTAL_DATA_PATH = STOCK_DATA_ROOT + 'Fundamental'
+FUNDAMENTAL_DATA_PATH = STOCK_DATA_ROOT + 'Fundamental/'
 REPORTS_DATA_PATH = STOCK_DATA_ROOT + 'Reports/'
 FAILED_LIST_PATH = STOCK_DATA_ROOT + 'Failed/'
 

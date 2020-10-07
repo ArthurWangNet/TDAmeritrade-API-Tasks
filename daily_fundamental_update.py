@@ -1,4 +1,5 @@
 from datetime import date
+import json
 from os import remove
 import td_config as td
 import api_keys
@@ -25,7 +26,7 @@ def get_fundamental_update(symbol):
         td_response = requests.get(url=urls.get_fundamental_endpoint(), params=payload)
         content = td_response.json()
         content_dict = content[symbol]['fundamental']
-        df = pd.DataFrame(content.dict, index=[0])
+        df = pd.DataFrame(content_dict, index=[0])
         return df
     except Exception as ex:
         return ex
@@ -56,7 +57,7 @@ if __name__ == '__main__':
         #Print number of attemps.
         print('This is {} try.'.format(i))
         #Go through list to fectch stock's fundamental info. Here we used a progress bar for better visual.
-        for symbol in progressBar(stock_list, prefix='Progress:', suffix='Complete', length= 50):
+        for symbol in progressBar(stock_list[1:10], prefix='Progress:', suffix='Complete', length= 50):
             #This will return either a dataframe contians fundamental data, or an expection object which means the request failed.
             df = get_fundamental_update(symbol)
             #Check if df contians fundamental data or expection.
@@ -75,7 +76,7 @@ if __name__ == '__main__':
     #Now after trying for 4 times, we could write the result to file. 
     all_fundamental.to_csv(td.FUNDAMENTAL_DATA_PATH + today +'.csv')
     #Write the failed stocks into fail for record.
-    with open(td.REPORTS_DATA_PATH + today + '_fundamental_failed_list.txt') as f:
+    with open(td.REPORTS_DATA_PATH + today + '_fundamental_failed_list.txt','w') as f:
         for symbol in stock_list:
             f.write("%s\n" %symbol)
     f.close()
