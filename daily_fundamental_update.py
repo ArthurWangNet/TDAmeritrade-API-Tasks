@@ -1,20 +1,21 @@
 from datetime import date
 from os import remove
 import td_config as td
+import api_keys
 import pandas as pd
 import requests
 import logging
 import urls
-from utilities import progressBar
 import datetime
 import os
 import time
+from utilties import progressBar
 
 def get_fundamental_update(symbol):
     time.sleep(0.5)
     #Define payload
     payload = {
-            'apikey' : td.api_key_fundamental,
+            'apikey' : api_keys.APIKEY_FUNDAMENTAL,
             'symbol': symbol,
             'projection':'fundamental',
     }
@@ -23,15 +24,20 @@ def get_fundamental_update(symbol):
         td_response = requests.get(url=urls.get_fundamental_endpoint(), params=payload)
         content = td_response.json()
         content_dict = content[symbol]['fundamental']
-        return pd.DataFrame(content.dict, index=[0])
+        df = pd.DataFrame(content.dict, index=[0])
+        return df
     except Exception as ex:
         return ex
 
 
 if __name__ == '__main__':
     today = datetime.datetime.now().strftime('%Y-%m-%d')
-
+    startTime = datetime.datetime.now()
     logging.basicConfig(filename=td.REPORTS_DATA_PATH + today +'_fundamental.log', level=logging.DEBUG )
+
+    print("Script Started at {}".format(startTime.strftime("%Y/%m/%d, %H:%M:%S")))
+    logging.info("Script Started at {}".format(startTime.strftime("%Y/%m/%d, %H:%M:%S")))
+
     
     stock_list = list(pd.read_csv(td.REFERENCES_DATA_PATH + 'us_exchanges_instruments.csv')['symbol'])
     
@@ -48,7 +54,7 @@ if __name__ == '__main__':
                 stock_list.remove(symbol)
                 logging.info(symbol + ' Completed')
             else:
-                logging.warning(symbol +' Failed because' + df)
+                logging.warning(symbol +' Failed because' + str(df))
     
 
     #Now after trying for 4 times, we could write the result to file.
@@ -57,6 +63,9 @@ if __name__ == '__main__':
         for symbol in stock_list:
             f.write("%s\n" %symbol)
     f.close()
-    
-
+    endtime = datetime.datetime.now()
+    print("Script Started at {}".format(endtime.strftime("%Y/%m/%d, %H:%M:%S")))
+    logging.info("Script Started at {}".format(endtime.strftime("%Y/%m/%d, %H:%M:%S")))
+    print("Script Took {} to run".format(endtime - startTime))
+    logging.info("Script Took {} to run".format(endtime - startTime))
 

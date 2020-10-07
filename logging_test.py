@@ -1,7 +1,7 @@
 import logging
 from logging import error
 
-logging.basicConfig(filename='./testlog.log', level=logging.DEBUG)
+logging.basicConfig(filename='./testlog.log', level=logging.DEBUG )
 
 def add(x, y):
     return x + y
