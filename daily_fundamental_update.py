@@ -46,6 +46,7 @@ if __name__ == '__main__':
     stock_list = list(pd.read_csv(td.REFERENCES_DATA_PATH + 'us_exchanges_instruments.csv')['symbol'])
     #Inital storage variables
     all_fundamental = pd.DataFrame([])
+    failed_list = []
 
     """
     This script will try to get fundamental data for 4 times. 
@@ -57,7 +58,7 @@ if __name__ == '__main__':
         #Print number of attemps.
         print('This is {} try.'.format(i))
         #Go through list to fectch stock's fundamental info. Here we used a progress bar for better visual.
-        for symbol in progressBar(stock_list[1:10], prefix='Progress:', suffix='Complete', length= 50):
+        for symbol in progressBar(stock_list, prefix='Progress:', suffix='Complete', length= 50):
             #This will return either a dataframe contians fundamental data, or an expection object which means the request failed.
             df = get_fundamental_update(symbol)
             #Check if df contians fundamental data or expection.
@@ -65,7 +66,7 @@ if __name__ == '__main__':
                 #Store this stock's fundamental in storage variablE.
                 all_fundamental = all_fundamental.append(df)
                 #Remove this symbol from list so it won't be request next time.
-                stock_list.remove(symbol)
+                failed_list.append(symbol)
                 #Put something in log.
                 logging.info(symbol + ' Completed')
             else:
@@ -77,7 +78,7 @@ if __name__ == '__main__':
     all_fundamental.to_csv(td.FUNDAMENTAL_DATA_PATH + today +'.csv')
     #Write the failed stocks into fail for record.
     with open(td.REPORTS_DATA_PATH + today + '_fundamental_failed_list.txt','w') as f:
-        for symbol in stock_list:
+        for symbol in failed_list:
             f.write("%s\n" %symbol)
     f.close()
 
