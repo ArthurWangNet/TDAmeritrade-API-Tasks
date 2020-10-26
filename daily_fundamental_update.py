@@ -10,7 +10,7 @@ import urls
 import datetime
 import os
 import time
-from utilties import progressBar
+from utilties import progressBar, get_symbol_list
 
 def get_fundamental_update(symbol):
     #TD API limits request to 120 per second. That is maxium 2 request per second, so sleep here.
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     print("Script Started at {}".format(startTime.strftime("%Y/%m/%d, %H:%M:%S")))
     logging.info("Script Started at {}".format(startTime.strftime("%Y/%m/%d, %H:%M:%S")))
     #Read in stock list.
-    stock_list = list(pd.read_csv(td.REFERENCES_DATA_PATH + 'us_exchanges_instruments.csv')['symbol'])
+    stock_list = get_symbol_list()
     #Inital storage variables
     all_fundamental = pd.DataFrame([])
     failed_list = []
@@ -66,6 +66,7 @@ if __name__ == '__main__':
                 #Store this stock's fundamental in storage variablE.
                 all_fundamental = all_fundamental.append(df)
                 #Remove this symbol from list so it won't be request next time.
+                #BUG
                 failed_list.append(symbol)
                 #Put something in log.
                 logging.info(symbol + ' Completed')

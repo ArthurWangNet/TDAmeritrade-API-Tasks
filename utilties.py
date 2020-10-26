@@ -1,4 +1,10 @@
 
+import td_config as td
+'''
+Function Name: progressBar
+Description: This function will provide a animated progress bar while doing some task on terminal.
+'''
+
 def progressBar(iterable, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
     """
     Call in a loop to create terminal progress bar
@@ -27,3 +33,17 @@ def progressBar(iterable, prefix = '', suffix = '', decimals = 1, length = 100, 
         printProgressBar(i + 1)
     # Print New Line on Complete
     print()
+
+
+'''
+Name: get_symbol_list
+Description: Will return a python list with all the symbols needs to be requested at beginning.
+'''
+def get_symbol_list():
+    read_list = []
+    with open(td.SYMBOL_LIST, 'r') as f:
+        for line in f:
+            currentPlace = line[:-1]
+            read_list.append(currentPlace)
+    f.close()
+    return read_list
